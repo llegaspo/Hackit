@@ -127,84 +127,190 @@ const MainFeed: React.FC<MainFeedProps> = ({
     }
   }, [onCreatePost]);
 
-  const containerStyle: React.CSSProperties = {
-    display: 'flex',
-    gap: '1.5rem',
-    padding: '2rem 2rem 2rem 1rem',
-    fontFamily: "'Britti Sans Trial', Inter, sans-serif",
-    minHeight: 'calc(100vh - 200px)',
-    justifyContent: 'center', 
-    maxWidth: '1200px',
-    margin: '0 auto', 
-    width: '100%',
-  };
-
-  const feedStyle: React.CSSProperties = {
-    flex: 1,
-    maxWidth: '650px', // Slightly wider for better readability
-    minWidth: '400px', // Ensure minimum width
-  };
-
   return (
     <>
       <style jsx>{`
-        @media (max-width: 1024px) {
-          .main-feed-container {
-            max-width: 95% !important;
-            padding: 1.5rem !important;
+        .main-feed-container {
+          display: flex;
+          gap: 2rem;
+          padding: 2rem;
+          font-family: 'Britti Sans Trial', Inter, sans-serif;
+          min-height: calc(100vh - 200px);
+          justify-content: center;
+          max-width: 1400px;
+          margin: 0 auto;
+          width: 100%;
+        }
+
+        .feed-content {
+          flex: 1;
+          max-width: 700px;
+          min-width: 0;
+        }
+
+        .sidebar-wrapper {
+          width: 320px;
+          flex-shrink: 0;
+        }
+
+        .posts-container {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
+        .create-post-wrapper {
+          margin-bottom: 2rem;
+          position: relative;
+        }
+
+        .create-post-wrapper::after {
+          content: '';
+          position: absolute;
+          bottom: -1rem;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 60%;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(233, 30, 99, 0.3), transparent);
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
           }
         }
 
+        .post-item {
+          animation: fadeIn 0.6s ease-out;
+        }
+
+        .post-item:nth-child(1) { animation-delay: 0.1s; }
+        .post-item:nth-child(2) { animation-delay: 0.2s; }
+        .post-item:nth-child(3) { animation-delay: 0.3s; }
+        .post-item:nth-child(4) { animation-delay: 0.4s; }
+        .post-item:nth-child(5) { animation-delay: 0.5s; }
+
+        /* Tablet Styles */
+        @media (max-width: 1200px) {
+          .main-feed-container {
+            max-width: 95%;
+            padding: 1.5rem;
+            gap: 1.5rem;
+          }
+          
+          .sidebar-wrapper {
+            width: 280px;
+          }
+          
+          .feed-content {
+            max-width: 600px;
+          }
+        }
+
+        @media (max-width: 1024px) {
+          .main-feed-container {
+            gap: 1rem;
+            padding: 1rem;
+          }
+          
+          .sidebar-wrapper {
+            width: 260px;
+          }
+        }
+
+        /* Mobile Styles */
         @media (max-width: 768px) {
           .main-feed-container {
-            flex-direction: column !important;
-            padding: 1rem !important;
-            gap: 1rem !important;
+            flex-direction: column;
+            padding: 1rem;
+            gap: 1.5rem;
+          }
+
+          .sidebar-wrapper {
+            display: none;
           }
 
           .feed-content {
-            max-width: none !important;
-            min-width: auto !important;
+            max-width: none;
+          }
+          
+          .posts-container {
+            gap: 1.25rem;
+          }
+          
+          .create-post-wrapper {
+            margin-bottom: 1.5rem;
           }
         }
 
         @media (max-width: 480px) {
           .main-feed-container {
-            padding: 0.5rem !important;
+            padding: 0.75rem;
+            gap: 1rem;
+          }
+          
+          .posts-container {
+            gap: 1rem;
+          }
+          
+          .create-post-wrapper {
+            margin-bottom: 1.25rem;
+          }
+        }
+
+        /* Small Mobile Optimization */
+        @media (max-width: 360px) {
+          .main-feed-container {
+            padding: 0.5rem;
           }
         }
       `}</style>
 
-      <div style={containerStyle} className="main-feed-container">
-        <Sidebar user={currentUser} />
+      <div className="main-feed-container">
+        <div className="sidebar-wrapper">
+          <Sidebar user={currentUser} />
+        </div>
         
-        <div style={feedStyle} className="feed-content">
-          <CreatePost 
-            user={{
-              profileColor: currentUser.profileColor,
-              avatar: currentUser.avatar
-            }}
-            onPost={handleCreatePost}
-            placeholder="What's on your mind?"
-          />
-          
-          {posts.map((post) => (
-            <Post
-              key={post.id}
-              id={post.id}
-              authorName={post.authorName}
-              authorTitle={post.authorTitle}
-              timeAgo={post.timeAgo}
-              content={post.content}
-              likes={post.likes}
-              comments={post.comments}
-              profileColor={post.profileColor}
-              isLiked={post.isLiked}
-              images={post.images}
-              onLike={handleLike}
-              onComment={handleComment}
+        <div className="feed-content">
+          {/* Create Post Section */}
+          <div className="create-post-wrapper">
+            <CreatePost 
+              user={{
+                profileColor: currentUser.profileColor,
+                avatar: currentUser.avatar
+              }}
+              onPost={handleCreatePost}
+              placeholder="Share your business insights..."
             />
-          ))}
+          </div>
+          
+          {/* Posts Feed */}
+          <div className="posts-container">
+            {posts.map((post) => (
+              <div key={post.id} className="post-item">
+                <Post
+                  id={post.id}
+                  authorName={post.authorName}
+                  authorTitle={post.authorTitle}
+                  timeAgo={post.timeAgo}
+                  content={post.content}
+                  likes={post.likes}
+                  comments={post.comments}
+                  profileColor={post.profileColor}
+                  isLiked={post.isLiked}
+                  images={post.images}
+                  onLike={handleLike}
+                  onComment={handleComment}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </>

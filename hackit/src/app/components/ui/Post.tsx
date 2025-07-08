@@ -182,17 +182,38 @@ const Post: React.FC<PostProps> = ({
         .post-container {
           background: rgba(255, 255, 255, 0.9);
           backdrop-filter: blur(20px);
-          border-radius: 1rem;
+          border-radius: 1.25rem;
           border: 1px solid rgba(255, 255, 255, 0.3);
           box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.1);
           margin-bottom: 1.5rem;
-          transition: all 0.3s ease;
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
           overflow: hidden;
+          position: relative;
+        }
+
+        .post-container::before {
+          content: '';
+          position: absolute;
+          top: -2px;
+          left: -2px;
+          right: -2px;
+          bottom: -2px;
+          background: linear-gradient(135deg, transparent, rgba(247, 197, 197, 0.3), transparent);
+          border-radius: 1.25rem;
+          opacity: 0;
+          transition: opacity 0.4s ease;
+          z-index: -1;
         }
 
         .post-container:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 0.75rem 2.5rem rgba(0, 0, 0, 0.15);
+          transform: translateY(-0.375rem) scale(1.01);
+          box-shadow: 0 1.25rem 3rem rgba(0, 0, 0, 0.2);
+          background: rgba(255, 255, 255, 0.95);
+          border-color: rgba(247, 197, 197, 0.2);
+        }
+
+        .post-container:hover::before {
+          opacity: 1;
         }
 
         .post-header {
@@ -200,11 +221,38 @@ const Post: React.FC<PostProps> = ({
           align-items: center;
           gap: 1rem;
           padding: 1.5rem 1.5rem 1rem 1.5rem;
+          transition: all 0.3s ease;
+        }
+
+        .post-container:hover .post-header {
+          padding-top: 1.75rem;
+        }
+
+        .profile-avatar {
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .post-container:hover .profile-avatar {
+          transform: scale(1.1);
+          box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15);
+        }
+
+        .author-name {
+          transition: all 0.3s ease;
+        }
+
+        .post-container:hover .author-name {
+          color: #E91E63;
         }
 
         .post-content {
           padding: 0 1.5rem 1rem 1.5rem;
           cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .post-container:hover .post-content {
+          color: #222;
         }
 
         .post-images {
@@ -218,6 +266,14 @@ const Post: React.FC<PostProps> = ({
           align-items: center;
           padding: 1rem 1.5rem;
           border-top: 1px solid rgba(0, 0, 0, 0.05);
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(10px);
+          transition: all 0.3s ease;
+        }
+
+        .post-container:hover .post-actions {
+          background: rgba(247, 197, 197, 0.1);
+          border-top-color: rgba(247, 197, 197, 0.2);
         }
 
         .action-buttons {
@@ -235,91 +291,96 @@ const Post: React.FC<PostProps> = ({
           font-size: 0.875rem;
           font-weight: 600;
           font-family: 'Britti Sans Trial', Inter, sans-serif;
-          transition: all 0.2s ease;
-          padding: 0.5rem;
-          border-radius: 0.5rem;
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          padding: 0.625rem 1rem;
+          border-radius: 0.75rem;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .action-button::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(247, 197, 197, 0.3), transparent);
+          transition: left 0.6s ease;
+        }
+
+        .action-button:hover::before {
+          left: 100%;
         }
 
         .action-button:hover {
-          background: rgba(0, 0, 0, 0.05);
+          background: rgba(247, 197, 197, 0.15);
+          transform: translateY(-0.125rem) scale(1.05);
+          box-shadow: 0 0.375rem 1rem rgba(247, 197, 197, 0.3);
+          border: 1px solid rgba(247, 197, 197, 0.3);
+        }
+
+        .action-button:active {
+          transform: translateY(0) scale(0.95);
         }
 
         .like-button {
           color: ${liked ? '#E91E63' : '#666'};
         }
 
-        .comment-button {
-          color: #666;
+        .like-button:hover {
+          color: #E91E63 !important;
+        }
+
+        .like-button.liked {
+          color: #E91E63;
+          background: rgba(233, 30, 99, 0.1);
+        }
+
+        .like-button.liked:hover {
+          background: rgba(233, 30, 99, 0.2);
+          transform: translateY(-0.125rem) scale(1.1);
+        }
+
+        .comment-button:hover {
+          color: #7C3AED;
+        }
+
+        .like-count {
+          transition: all 0.3s ease;
+          font-weight: 600;
+        }
+
+        .post-container:hover .like-count {
+          color: #E91E63;
+          transform: scale(1.05);
         }
 
         @media (max-width: 768px) {
           .post-container {
             margin-bottom: 1rem;
-            border-radius: 0.75rem;
+            border-radius: 1rem;
           }
 
-          .post-header {
-            padding: 1rem 1rem 0.75rem 1rem;
-            gap: 0.75rem;
+          .post-container:hover {
+            transform: translateY(-0.25rem) scale(1.005);
           }
 
-          .post-content {
-            padding: 0 1rem 0.75rem 1rem;
-            font-size: 0.9rem;
-            line-height: 1.5;
-          }
-
-          .post-images {
-            padding: 0 1rem 0.75rem 1rem;
-          }
-
+          .post-header,
+          .post-content,
+          .post-images,
           .post-actions {
-            padding: 0.75rem 1rem;
-          }
-
-          .action-buttons {
-            gap: 1rem;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
           }
 
           .action-button {
-            font-size: 0.8rem;
-            padding: 0.375rem;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .post-container {
-            margin-bottom: 0.75rem;
-            border-radius: 0.5rem;
+            padding: 0.5rem 0.75rem !important;
+            font-size: 0.75rem !important;
           }
 
-          .post-header {
-            padding: 0.75rem 0.75rem 0.5rem 0.75rem;
-            gap: 0.5rem;
-          }
-
-          .post-content {
-            padding: 0 0.75rem 0.5rem 0.75rem;
-            font-size: 0.85rem;
-            line-height: 1.4;
-          }
-
-          .post-images {
-            padding: 0 0.75rem 0.5rem 0.75rem;
-          }
-
-          .post-actions {
-            padding: 0.5rem 0.75rem;
-          }
-
-          .action-buttons {
-            gap: 0.75rem;
-          }
-
-          .action-button {
-            font-size: 0.75rem;
-            padding: 0.25rem;
-            gap: 0.375rem;
+          .action-button:hover {
+            transform: translateY(-0.0625rem) scale(1.02) !important;
           }
         }
       `}</style>

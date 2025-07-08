@@ -1,80 +1,149 @@
+"use client";
 import React, { memo } from 'react';
 
-interface SidebarProps {
-  user?: {
-    name: string;
-    role: string;
-    profileColor: string;
-    avatar?: string; // For future profile image integration
-  };
+interface User {
+  id: string;
+  name: string;
+  role: string;
+  profileColor: string;
+  avatar?: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ 
-  user = {
-    name: "Placeholder Name",
-    role: "Works at",
-    profileColor: "#F7C5C5"
-  }
-}) => {
+interface SidebarProps {
+  user: User;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ user }) => {
   const sidebarStyle: React.CSSProperties = {
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    borderRadius: '1rem',
-    padding: '1.5rem',
-    marginRight: '1rem',
-    width: '17.5rem',
-    height: 'fit-content',
-    fontFamily: "'Britti Sans Trial', Inter, sans-serif",
-    backdropFilter: 'blur(10px)',
+    background: 'rgba(255, 255, 255, 0.9)',
+    backdropFilter: 'blur(20px)',
+    borderRadius: '1.5rem',
     border: '1px solid rgba(255, 255, 255, 0.3)',
     boxShadow: '0 0.5rem 2rem rgba(0, 0, 0, 0.1)',
+    padding: '0', // Remove padding to accommodate gradient
+    fontFamily: "'Britti Sans Trial', Inter, sans-serif",
+    height: 'fit-content',
+    width: '100%',
+    overflow: 'hidden',
   };
 
-  const profileCircleStyle: React.CSSProperties = {
-    width: '3.75rem',
-    height: '3.75rem',
-    backgroundColor: user.profileColor,
-    borderRadius: '50%',
-    marginBottom: '1rem',
-    backgroundImage: user.avatar ? `url(${user.avatar})` : 'none',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
+  const gradientTopStyle: React.CSSProperties = {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '4px',
+    background: 'linear-gradient(90deg, #E91E63, #9C27B0, #673AB7, #3F51B5)',
+    borderRadius: '1.5rem 1.5rem 0 0',
+    zIndex: 1,
   };
 
-  const welcomeTextStyle: React.CSSProperties = {
-    fontSize: '1.25rem',
+  const contentStyle: React.CSSProperties = {
+    padding: '2rem',
+    paddingTop: '2.5rem', // Extra padding to account for gradient
+  };
+
+  const welcomeStyle: React.CSSProperties = {
+    fontSize: '1.5rem',
     fontWeight: 700,
     color: '#333',
     marginBottom: '0.5rem',
+    fontFamily: "'Britti Sans Trial', Inter, sans-serif",
   };
 
-  const nameStyle: React.CSSProperties = {
+  const descriptionStyle: React.CSSProperties = {
     fontSize: '1rem',
-    fontWeight: 300,
     color: '#666',
-    marginBottom: '0.25rem',
+    lineHeight: '1.6',
+    marginBottom: '2rem',
+    fontFamily: "'Britti Sans Trial', Inter, sans-serif",
   };
 
-  const roleStyle: React.CSSProperties = {
+  const profileSectionStyle: React.CSSProperties = {
+    borderTop: '1px solid rgba(0, 0, 0, 0.1)',
+    paddingTop: '1.5rem',
+  };
+
+  const profileHeaderStyle: React.CSSProperties = {
+    fontSize: '1.125rem',
+    fontWeight: 600,
+    color: '#333',
+    marginBottom: '1rem',
+    fontFamily: "'Britti Sans Trial', Inter, sans-serif",
+  };
+
+  const profileItemStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.75rem',
+    marginBottom: '1rem',
+  };
+
+  const profileCircleStyle: React.CSSProperties = {
+    width: '3rem',
+    height: '3rem',
+    borderRadius: '50%',
+    backgroundColor: user.profileColor,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '1.125rem',
+    fontWeight: 600,
+    color: 'white',
+    fontFamily: "'Britti Sans Trial', Inter, sans-serif",
+  };
+
+  const profileInfoStyle: React.CSSProperties = {
+    flex: 1,
+  };
+
+  const profileNameStyle: React.CSSProperties = {
+    fontSize: '1rem',
+    fontWeight: 600,
+    color: '#333',
+    marginBottom: '0.25rem',
+    fontFamily: "'Britti Sans Trial', Inter, sans-serif",
+  };
+
+  const profileRoleStyle: React.CSSProperties = {
     fontSize: '0.875rem',
-    fontWeight: 300,
-    color: '#888',
+    color: '#666',
+    fontFamily: "'Britti Sans Trial', Inter, sans-serif",
   };
 
   return (
     <>
       <style jsx>{`
         @media (max-width: 768px) {
-          .sidebar {
+          .sidebar-container {
             display: none !important;
           }
         }
       `}</style>
       
-      <div style={sidebarStyle} className="sidebar">
-        <div style={profileCircleStyle}></div>
-        <div style={welcomeTextStyle}>Welcome back!</div>
-        <div style={nameStyle}>{user.name}</div>
-        <div style={roleStyle}>{user.role}</div>
+      <div style={sidebarStyle} className="sidebar-container">
+        {/* Beautiful Gradient Top */}
+        <div style={gradientTopStyle}></div>
+        
+        <div style={contentStyle}>
+          <h2 style={welcomeStyle}>Welcome!</h2>
+          <p style={descriptionStyle}>
+            Connect with inspiring women leaders, share your journey, and discover opportunities to grow your business and career.
+          </p>
+          
+          <div style={profileSectionStyle}>
+            <h3 style={profileHeaderStyle}>Your Profile</h3>
+            <div style={profileItemStyle}>
+              <div style={profileCircleStyle}>
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+              <div style={profileInfoStyle}>
+                <div style={profileNameStyle}>{user.name}</div>
+                <div style={profileRoleStyle}>{user.role}</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );
