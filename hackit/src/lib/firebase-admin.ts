@@ -18,4 +18,3 @@ const firebaseAdminConfig = {
 const app = !getApps().length ? initializeApp(firebaseAdminConfig) : getApps()[0];
 
 export const auth = getAuth(app);
-export const firestore = getFirestore(app);
