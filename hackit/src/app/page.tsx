@@ -1,103 +1,255 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useCallback } from 'react';
+import dynamic from 'next/dynamic';
+import LoadingWrapper from './components/ui/LoadingWrapper';
+import FloatingBubblegum from './components/ui/FloatingBubblegum';
+import NavbarContainer from './components/ui/NavbarContainer';
+import SecondaryNavbar from './components/ui/SecondaryNavbar';
+
+// Dynamically import components that aren't needed for the initial render
+const MobileMenu = dynamic(() => import('./components/ui/MobileMenu'));
+const MainFeed = dynamic(() => import('./components/ui/MainFeed'));
+const ProfileHeader = dynamic(() => import('./components/ui/ProfileHeader'));
+const ProfileContent = dynamic(() => import('./components/ui/ProfileContent'));
+
+const userProfile = {
+  name: 'Placeholder Name',
+  businessName: 'Business owner of Placeholder Business',
+  location: 'Mandaue City, Cebu, Central Visayas, Philippines',
+  avatarColor: '#F7C5C5',
+};
+
+const userPosts = [
+    {
+      id: "1",
+      authorName: 'Placeholder Name',
+      authorTitle: 'Business owner of Placeholder Business',
+      timeAgo: '2h ago',
+      content: 'Just wrapped up a deep dive into our Q3 analytics. The data confirms that shifting our ad spend from broad-stroke campaigns to hyper-targeted micro-influencer collaborations has yielded a 150% increase in engagement. For fellow B2C founders, don\'t underestimate the power of a niche audience. Authenticity is our most valuable currency!',
+      likes: 102,
+      comments: 23,
+      profileColor: '#F7C5C5',
+      isLiked: false,
+      images: ['/images/placeholder.jpg'],
+    },
+    {
+      id: "2",
+      authorName: 'Placeholder Name',
+      authorTitle: 'Business owner of Placeholder Business',
+      timeAgo: '8h ago',
+      content: 'Scaling a startup is a marathon, not a sprint. This week, we focused on refining our operational workflows to eliminate bottlenecks before our next growth phase. We implemented a new project management system that integrates directly with our CRM. The goal? To ensure our client-facing teams have real-time data access, reducing response times by an anticipated 30%. Remember, a strong internal foundation is what makes external growth sustainable. We\'re building a skyscraper, not a house of cards.',
+      likes: 256,
+      comments: 41,
+      profileColor: '#F7C5C5',
+      isLiked: true,
+    },
+];
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeView, setActiveView] = useState('forHer');
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const handleMobileMenuToggle = useCallback(() => {
+    setIsMobileMenuOpen(prev => !prev);
+  }, []);
+
+  const handleViewChange = useCallback((view: string) => {
+    setActiveView(view);
+  }, []);
+
+  const renderContent = () => {
+    switch (activeView) {
+      case 'forHer':
+        return <MainFeed />;
+      case 'profile':
+        return (
+          <div className="profile-view-container">
+            <ProfileHeader user={userProfile} />
+            <ProfileContent posts={userPosts} />
+          </div>
+        );
+      default:
+        // By default, or if notifications is clicked, show the main feed
+        return <MainFeed />;
+    }
+  };
+
+  return (
+    <LoadingWrapper>
+      <MobileMenu isOpen={isMobileMenuOpen} onClose={handleMobileMenuToggle} />
+      <div style={{ 
+        backgroundColor: '#FFF8F8', 
+        minHeight: '100vh', 
+        width: '100%', 
+        position: 'relative', 
+        overflow: 'hidden' 
+      }}>
+        <style jsx global>{`
+          .profile-view-container {
+            padding: 2rem;
+          }
+
+          @media (max-width: 1024px) {
+            .profile-view-container {
+              padding: 1.5rem;
+            }
+          }
+
+          @media (max-width: 768px) {
+            .profile-view-container {
+              padding: 1rem;
+            }
+          }
+
+          @keyframes float {
+            0% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-1.25rem) translateX(1.25rem); }
+            100% { transform: translateY(0) translateX(0); }
+          }
+
+          .floating-image {
+            position: absolute;
+            opacity: 0.15;
+            width: 53.125rem;
+            height: auto;
+            animation: float 6s ease-in-out infinite;
+            will-change: transform;
+          }
+
+          .image1 {
+            top: 0%;
+            left: 5%;
+            animation-delay: 0s;
+            animation-duration: 8s;
+          }
+
+          .image2 {
+            top: 45%;
+            left: 70%;
+            animation-delay: 2s;
+            animation-duration: 10s;
+          }
+
+          .image3 {
+            top: 60%;
+            left: -15%;
+            animation-delay: 4s;
+            animation-duration: 7s;
+          }
+
+          .frosted-glass {
+            position: absolute;
+            top: 4rem;
+            left: 8rem;
+            right: 8rem;
+            bottom: 4rem;
+            
+            /* Enhanced Glass Effect */
+            border: 1px solid transparent;
+            background: 
+              linear-gradient(135deg, rgba(255,255,255,0.5), rgba(255,255,255,0.05), rgba(255,255,255,0.5)) border-box,
+              rgba(255, 255, 255, 0.15) padding-box;
+            background-clip: border-box, padding-box;
+            backdrop-filter: blur(12px) saturate(150%);
+            -webkit-backdrop-filter: blur(12px) saturate(150%);
+            
+            border-radius: 1.5rem; /* 24px -> 1.5rem */
+            box-shadow: 0 0.25rem 1.875rem rgba(0, 0, 0, 0.1); /* 4px 30px */
+            overflow-y: auto;
+            overflow-x: hidden; /* Prevent horizontal scrolling on mobile */
+            display: flex;
+            flex-direction: column;
+            max-width: 87.5rem; /* 1400px */
+            margin: 0 auto;
+          }
+
+          /* Mobile responsive styles */
+          @media (max-width: 1200px) {
+            .frosted-glass {
+              left: 4rem !important;
+              right: 4rem !important;
+            }
+          }
+
+          @media (max-width: 768px) {
+            .frosted-glass {
+              top: 1rem !important;
+              left: 1rem !important;
+              right: 1rem !important;
+              bottom: 1rem !important;
+              border-radius: 1rem !important;
+            }
+
+            .floating-image {
+              width: 31.25rem !important;
+              opacity: 0.12 !important;
+            }
+
+            .image1 {
+              top: -5% !important;
+              left: -10% !important;
+            }
+
+            .image2 {
+              top: 50% !important;
+              left: 60% !important;
+            }
+
+            .image3 {
+              top: 75% !important;
+              left: -20% !important;
+            }
+
+            /* Add padding to account for navbars */
+            .main-content-area {
+              padding-top: 3.75rem !important; /* 60px -> 3.75rem. Further reduced to bring content much closer to navbar */
+            }
+          }
+
+          @media (max-width: 480px) {
+            .frosted-glass {
+              top: 1rem !important;
+              left: 0.5rem !important;
+              right: 0.5rem !important;
+              bottom: 1rem !important;
+              border-radius: 0.75rem !important;
+            }
+
+            .floating-image {
+              width: 21.875rem !important;
+              opacity: 0.1 !important;
+            }
+
+            .image1 {
+              top: 0% !important;
+              left: -15% !important;
+            }
+
+            .image2 {
+              top: 55% !important;
+              left: 50% !important;
+            }
+
+            .image3 {
+              top: 80% !important;
+              left: -25% !important;
+            }
+          }
+        `}</style>
+
+        <FloatingBubblegum className="image1" />
+        <FloatingBubblegum className="image2" />
+        <FloatingBubblegum className="image3" />
+
+        <div className="frosted-glass">
+          <NavbarContainer onMobileMenuToggle={handleMobileMenuToggle} />
+          <SecondaryNavbar activeView={activeView} onViewChange={handleViewChange} />
+          <div className="main-content-area">
+            {renderContent()}
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </div>
+    </LoadingWrapper>
   );
 }
