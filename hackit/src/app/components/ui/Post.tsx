@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, memo } from 'react';
+import React, { useState, memo, useEffect } from 'react';
 import { Heart, MessageCircle } from 'lucide-react';
 import PostModal from './PostModal';
 
@@ -36,9 +36,25 @@ const Post: React.FC<PostProps> = ({
   const [likeCount, setLikeCount] = useState(likes);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const TRUNCATE_LENGTH = 280;
-  const isLongPost = content.length > TRUNCATE_LENGTH;
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Responsive truncation lengths
+  const DESKTOP_TRUNCATE_LENGTH = 280;
+  const MOBILE_TRUNCATE_LENGTH = 150; // Much shorter for mobile
+  const truncateLength = isMobile ? MOBILE_TRUNCATE_LENGTH : DESKTOP_TRUNCATE_LENGTH;
+  const isLongPost = content.length > truncateLength;
 
   const handleLike = () => {
     const newLiked = !liked;
@@ -374,6 +390,10 @@ const Post: React.FC<PostProps> = ({
             padding-right: 1rem !important;
           }
 
+          .post-content {
+            font-size: 0.875rem !important;
+          }
+
           .action-button {
             padding: 0.5rem 0.75rem !important;
             font-size: 0.75rem !important;
@@ -426,7 +446,7 @@ const Post: React.FC<PostProps> = ({
           }}>
             {isLongPost && !isExpanded ? (
               <>
-                {`${content.substring(0, TRUNCATE_LENGTH)}...`}
+                {`${content.substring(0, truncateLength)}...`}
                 <button 
                   onClick={(e) => {
                     e.stopPropagation();
@@ -469,11 +489,11 @@ const Post: React.FC<PostProps> = ({
         <div className="post-actions">
           <div className="action-buttons">
             <button className="action-button like-button" onClick={handleLike}>
-              <Heart size={18} fill={liked ? '#E91E63' : 'none'} strokeWidth={1.5} />
+              <Heart size={isMobile ? 24 : 18} fill={liked ? '#E91E63' : 'none'} strokeWidth={1.5} />
               <span>{likeCount}</span>
             </button>
             <button className="action-button comment-button" onClick={handleComment}>
-              <MessageCircle size={18} strokeWidth={1.5} />
+              <MessageCircle size={isMobile ? 24 : 18} strokeWidth={1.5} />
               <span>{comments}</span>
             </button>
           </div>

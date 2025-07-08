@@ -147,6 +147,7 @@ const NavbarContainer: React.FC<NavbarContainerProps> = ({ onMobileMenuToggle })
           background: rgba(255, 255, 255, 0.1);
           border: 1px solid transparent;
           backdrop-filter: blur(10px);
+          user-select: none;
         }
 
         .nav-link::before {
@@ -221,6 +222,16 @@ const NavbarContainer: React.FC<NavbarContainerProps> = ({ onMobileMenuToggle })
 
         .burger-button:active {
           transform: scale(0.95);
+        }
+
+        .logo-section {
+          cursor: pointer;
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          user-select: none;
+        }
+
+        .logo-text {
+          user-select: none;
         }
 
         /* Desktop styles - ensure hamburger is hidden */

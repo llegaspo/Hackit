@@ -139,6 +139,7 @@ const SecondaryNavbar: React.FC<SecondaryNavbarProps> = ({ activeView, onViewCha
         .secondary-nav-section {
           position: relative;
           overflow: hidden;
+          user-select: none;
         }
 
         .secondary-nav-section.notifications-section {
@@ -192,6 +193,7 @@ const SecondaryNavbar: React.FC<SecondaryNavbarProps> = ({ activeView, onViewCha
 
         .nav-icon {
           transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          user-select: none;
         }
 
         .secondary-nav-section:hover .nav-icon {
@@ -207,6 +209,7 @@ const SecondaryNavbar: React.FC<SecondaryNavbarProps> = ({ activeView, onViewCha
           display: inline;
           font-size: 0.875rem;
           transition: all 0.3s ease;
+          user-select: none;
         }
 
         .secondary-nav-section:hover .nav-text {
