@@ -63,4 +63,12 @@ const LoadingSpinner = () => {
   );
 };
 
+export const LoadingWrapper = ({ loading, children }: { loading: boolean; children: React.ReactNode }) => {
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+  return <>{children}</>;
+};
+
+
 export default LoadingSpinner; 

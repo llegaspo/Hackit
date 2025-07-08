@@ -372,7 +372,7 @@ const PostModal: React.FC<PostModalProps> = ({
           -webkit-backdrop-filter: blur(20px);
           border-radius: 1.5rem;
           width: 100%;
-          max-width: 56rem;
+          max-width: 50rem;
           height: calc(100vh - 6rem);
           max-height: calc(100vh - 6rem);
           min-height: auto;
@@ -387,13 +387,13 @@ const PostModal: React.FC<PostModalProps> = ({
 
         @media (min-width: 1200px) {
           .post-modal-content {
-            max-width: 64rem !important;
+            max-width: 56rem !important;
           }
         }
 
         @media (min-width: 1440px) {
           .post-modal-content {
-            max-width: 72rem !important;
+            max-width: 62rem !important;
           }
         }
 
