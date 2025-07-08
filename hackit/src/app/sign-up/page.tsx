@@ -55,4 +55,6 @@ const SignUp = () => {
   );
 };
 
+//this component is a simple sign-up form that allows users to create an account using their email and password
+//uses Firebase auth to handle user creation
 export default SignUp;
