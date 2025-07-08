@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect, memo } from 'react';
 import { createPortal } from 'react-dom';
-import Image from 'next/image';
 import { Heart, MessageCircle, X, Send } from 'lucide-react';
 
 interface Comment {
@@ -44,6 +43,7 @@ const PostModal: React.FC<PostModalProps> = ({
   const [likeCount, setLikeCount] = useState(post.likes);
   const [commentText, setCommentText] = useState('');
   const [mounted, setMounted] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [comments, setComments] = useState<Comment[]>([
     {
       id: "1",
@@ -140,6 +140,26 @@ const PostModal: React.FC<PostModalProps> = ({
     }
   };
 
+  const nextImage = () => {
+    if (post.images && post.images.length > 1) {
+      setCurrentImageIndex((prev) => 
+        prev === post.images!.length - 1 ? 0 : prev + 1
+      );
+    }
+  };
+
+  const prevImage = () => {
+    if (post.images && post.images.length > 1) {
+      setCurrentImageIndex((prev) => 
+        prev === 0 ? post.images!.length - 1 : prev - 1
+      );
+    }
+  };
+
+  const goToImage = (index: number) => {
+    setCurrentImageIndex(index);
+  };
+
   if (!isOpen || !mounted) return null;
 
   const renderImages = () => {
@@ -150,52 +170,175 @@ const PostModal: React.FC<PostModalProps> = ({
         <div style={{ 
           position: 'relative', 
           width: '100%', 
-          height: '25rem', 
-          borderRadius: '0.75rem', 
+          marginBottom: '1rem',
+          borderRadius: '0.75rem',
           overflow: 'hidden',
-          marginBottom: '1rem'
         }}>
-          <Image 
+          <img 
             src={post.images[0]} 
             alt="Post image" 
-            fill
-            style={{ objectFit: 'cover' }}
-            sizes="(max-width: 768px) 100vw, 60vw"
+            style={{ 
+              width: '100%', 
+              height: 'auto',
+              maxHeight: '60vh',
+              objectFit: 'contain',
+              display: 'block'
+            }}
           />
         </div>
       );
     }
     
+    // Image carousel for multiple images
     return (
       <div style={{
-        display: 'grid',
-        gap: '2px',
-        gridTemplateColumns: post.images.length === 2 ? '1fr 1fr' : 
-                            post.images.length === 3 ? '2fr 1fr' : 
-                            post.images.length >= 4 ? '1fr 1fr' : '1fr',
-        gridAutoRows: '12.5rem',
-        marginBottom: '1rem'
+        position: 'relative',
+        width: '100%',
+        marginBottom: '1rem',
+        borderRadius: '0.75rem',
+        overflow: 'hidden',
+        backgroundColor: '#f8f9fa'
       }}>
-        {post.images.slice(0, 4).map((image, index) => (
-          <div
-            key={index}
-            style={{
-              position: 'relative',
-              borderRadius: '0.75rem',
-              overflow: 'hidden',
-              gridColumn: post.images!.length === 3 && index === 0 ? 'span 1' : 'auto',
-              gridRow: post.images!.length === 3 && index === 0 ? 'span 2' : 'auto',
+        {/* Main Image Display */}
+        <div style={{ position: 'relative' }}>
+          <img
+            src={post.images[currentImageIndex]}
+            alt={`Post image ${currentImageIndex + 1}`}
+            style={{ 
+              width: '100%', 
+              height: 'auto',
+              maxHeight: '60vh',
+              objectFit: 'contain',
+              display: 'block'
             }}
-          >
-            <Image
-              src={image}
-              alt={`Post image ${index + 1}`}
-              fill
-              style={{ objectFit: 'cover' }}
-              sizes="(max-width: 768px) 50vw, 30vw"
-            />
+          />
+          
+          {/* Navigation Buttons */}
+          {post.images.length > 1 && (
+            <>
+              <button
+                onClick={prevImage}
+                style={{
+                  position: 'absolute',
+                  left: '1rem',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'rgba(0, 0, 0, 0.7)',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '3rem',
+                  height: '3rem',
+                  color: 'white',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.25rem',
+                  fontWeight: 'bold',
+                  transition: 'all 0.2s ease',
+                  zIndex: 10
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(0, 0, 0, 0.9)';
+                  e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(0, 0, 0, 0.7)';
+                  e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
+                }}
+              >
+                ‹
+              </button>
+              
+              <button
+                onClick={nextImage}
+                style={{
+                  position: 'absolute',
+                  right: '1rem',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'rgba(0, 0, 0, 0.7)',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '3rem',
+                  height: '3rem',
+                  color: 'white',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.25rem',
+                  fontWeight: 'bold',
+                  transition: 'all 0.2s ease',
+                  zIndex: 10
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(0, 0, 0, 0.9)';
+                  e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(0, 0, 0, 0.7)';
+                  e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
+                }}
+              >
+                ›
+              </button>
+            </>
+          )}
+        </div>
+
+        {/* Dot Indicators */}
+        {post.images.length > 1 && (
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '1rem',
+            gap: '0.5rem',
+            background: 'rgba(255, 255, 255, 0.9)',
+            backdropFilter: 'blur(10px)'
+          }}>
+            {post.images.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToImage(index)}
+                style={{
+                  width: '0.75rem',
+                  height: '0.75rem',
+                  borderRadius: '50%',
+                  border: 'none',
+                  background: index === currentImageIndex ? '#E91E63' : 'rgba(0, 0, 0, 0.3)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  transform: index === currentImageIndex ? 'scale(1.2)' : 'scale(1)'
+                }}
+                onMouseEnter={(e) => {
+                  if (index !== currentImageIndex) {
+                    e.currentTarget.style.background = 'rgba(0, 0, 0, 0.5)';
+                    e.currentTarget.style.transform = 'scale(1.1)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (index !== currentImageIndex) {
+                    e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)';
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }
+                }}
+              />
+            ))}
+            
+            {/* Image Counter */}
+            <span style={{
+              marginLeft: '1rem',
+              fontSize: '0.875rem',
+              color: '#666',
+              fontFamily: "'Britti Sans Trial', Inter, sans-serif",
+              fontWeight: 500
+            }}>
+              {currentImageIndex + 1} / {post.images.length}
+            </span>
           </div>
-        ))}
+        )}
       </div>
     );
   };
@@ -229,7 +372,7 @@ const PostModal: React.FC<PostModalProps> = ({
           -webkit-backdrop-filter: blur(20px);
           border-radius: 1.5rem;
           width: 100%;
-          max-width: 42rem;
+          max-width: 56rem;
           height: calc(100vh - 6rem);
           max-height: calc(100vh - 6rem);
           min-height: auto;
@@ -240,6 +383,18 @@ const PostModal: React.FC<PostModalProps> = ({
           animation: slideUp 0.3s ease-out;
           margin: 0;
           position: relative;
+        }
+
+        @media (min-width: 1200px) {
+          .post-modal-content {
+            max-width: 64rem !important;
+          }
+        }
+
+        @media (min-width: 1440px) {
+          .post-modal-content {
+            max-width: 72rem !important;
+          }
         }
 
         .post-modal-header {
@@ -365,18 +520,34 @@ const PostModal: React.FC<PostModalProps> = ({
 
         @media (max-width: 768px) {
           .post-modal-overlay {
-            padding: 0.5rem !important;
+            padding: 1rem 0.5rem !important;
           }
 
           .post-modal-content {
-            max-height: calc(100vh - 1rem) !important;
+            height: calc(100vh - 2rem) !important;
+            max-height: calc(100vh - 2rem) !important;
             border-radius: 1rem !important;
-            margin: 0.5rem auto !important;
+            margin: 0 !important;
           }
 
           .post-modal-header, .post-modal-body, .post-modal-footer {
             padding-left: 1rem !important;
             padding-right: 1rem !important;
+          }
+
+          .post-modal-header {
+            padding-top: 1rem !important;
+            padding-bottom: 0.75rem !important;
+          }
+
+          .post-modal-body {
+            padding-top: 0.75rem !important;
+            padding-bottom: 0.75rem !important;
+          }
+
+          .post-modal-footer {
+            padding-top: 0.75rem !important;
+            padding-bottom: 1rem !important;
           }
 
           .post-modal-comment-input-container {
@@ -387,17 +558,53 @@ const PostModal: React.FC<PostModalProps> = ({
             width: 2.25rem !important;
             height: 2.25rem !important;
           }
+
+          .post-modal-comment-item {
+            padding: 0.5rem !important;
+            margin-bottom: 0.75rem !important;
+          }
         }
 
         @media (max-width: 480px) {
           .post-modal-overlay {
-            padding: 0.25rem !important;
+            padding: 0.5rem 0.25rem !important;
           }
 
           .post-modal-content {
-            max-height: calc(100vh - 0.5rem) !important;
+            height: calc(100vh - 1rem) !important;
+            max-height: calc(100vh - 1rem) !important;
             border-radius: 0.75rem !important;
-            margin: 0.25rem auto !important;
+            margin: 0 !important;
+          }
+
+          .post-modal-header, .post-modal-body, .post-modal-footer {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+          }
+
+          .post-modal-header {
+            padding-top: 0.75rem !important;
+            padding-bottom: 0.5rem !important;
+          }
+
+          .post-modal-body {
+            padding-top: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
+          }
+
+          .post-modal-footer {
+            padding-top: 0.5rem !important;
+            padding-bottom: 0.75rem !important;
+          }
+
+          .post-modal-comment-input {
+            font-size: 1rem !important;
+            padding: 0.625rem 0.75rem !important;
+          }
+
+          .post-modal-send-button {
+            width: 2rem !important;
+            height: 2rem !important;
           }
         }
       `}</style>

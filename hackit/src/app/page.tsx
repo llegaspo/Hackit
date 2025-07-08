@@ -115,6 +115,11 @@ export default function Home() {
             height: auto;
             animation: float 6s ease-in-out infinite;
             will-change: transform;
+            user-select: none;
+            pointer-events: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
           }
 
           .image1 {

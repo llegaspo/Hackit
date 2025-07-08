@@ -122,8 +122,10 @@ const SecondaryNavbar: React.FC<SecondaryNavbarProps> = ({ activeView, onViewCha
     return {
       ...sectionStyle,
       backgroundColor: isActive ? 'white' : '#F8F8F8',
-      boxShadow: isActive ? '0 0.125rem 0.5rem rgba(0, 0, 0, 0.1)' : 'none',
+      boxShadow: isActive ? '0 0.25rem 1rem rgba(0, 0, 0, 0.15)' : 'none',
       fontWeight: isActive ? 700 : 300,
+      border: isActive ? '1px solid rgba(255, 255, 255, 0.8)' : '1px solid transparent',
+      transform: isActive ? 'translateY(-0.125rem)' : 'translateY(0)',
     };
   };
 
@@ -134,18 +136,99 @@ const SecondaryNavbar: React.FC<SecondaryNavbarProps> = ({ activeView, onViewCha
   return (
     <>
       <style jsx>{`
+        .secondary-nav-section {
+          position: relative;
+          overflow: hidden;
+          user-select: none;
+        }
+
+        .secondary-nav-section.notifications-section {
+          overflow: hidden !important;
+          z-index: 20;
+        }
+
+        .secondary-navbar-container {
+          position: relative;
+        }
+
+        .notifications-dropdown {
+          position: absolute;
+          top: 100%;
+          right: 2rem;
+          z-index: 50;
+          margin-top: 0.5rem;
+        }
+
+        .secondary-nav-section::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(247, 197, 197, 0.3), transparent);
+          transition: left 0.6s ease;
+        }
+
+        .secondary-nav-section:hover::before {
+          left: 100%;
+        }
+
         .secondary-nav-section:hover {
-          background-color: #F0F0F0 !important;
-          transform: translateY(-0.0625rem);
+          background: linear-gradient(135deg, rgba(247, 197, 197, 0.2), rgba(233, 30, 99, 0.1)) !important;
+          transform: translateY(-0.25rem) scale(1.02) !important;
+          box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15) !important;
+          border: 1px solid rgba(247, 197, 197, 0.4) !important;
         }
 
         .secondary-nav-section.active:hover {
-          background-color: #FAFAFA !important;
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(247, 197, 197, 0.1)) !important;
+          transform: translateY(-0.1875rem) scale(1.02) !important;
+          box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.2) !important;
+        }
+
+        .secondary-nav-section:active {
+          transform: translateY(-0.0625rem) scale(0.98) !important;
+        }
+
+        .nav-icon {
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          user-select: none;
+        }
+
+        .secondary-nav-section:hover .nav-icon {
+          transform: scale(1.1) rotate(5deg);
+          color: #E91E63 !important;
+        }
+
+        .secondary-nav-section.active .nav-icon {
+          color: #E91E63 !important;
         }
 
         .nav-text {
           display: inline;
           font-size: 0.875rem;
+          transition: all 0.3s ease;
+          user-select: none;
+        }
+
+        .secondary-nav-section:hover .nav-text {
+          color: #E91E63 !important;
+          font-weight: 600 !important;
+        }
+
+        .secondary-nav-section.active .nav-text {
+          color: #E91E63 !important;
+        }
+
+        /* Ensure notification menu doesn't interfere with hover detection */
+        .notifications-menu {
+          pointer-events: auto;
+        }
+
+        .secondary-nav-section.notifications-section {
+          /* Contain hover area to prevent interference */
+          isolation: isolate;
         }
 
         @media (max-width: 768px) {
@@ -205,19 +288,22 @@ const SecondaryNavbar: React.FC<SecondaryNavbarProps> = ({ activeView, onViewCha
         
         <div 
           style={getSectionStyle('notifications')} 
-          className="secondary-nav-section"
+          className="secondary-nav-section notifications-section"
           onClick={() => handleTabClick('notifications')}
           ref={notificationsRef}
         >
           <Bell size={22} style={iconStyle} className="nav-icon" />
           <span className="nav-text">Notifications</span>
-          {isNotificationsOpen && (
+        </div>
+        
+        {isNotificationsOpen && (
+          <div className="notifications-dropdown">
             <NotificationsMenu 
               notifications={notifications}
               onNotificationClick={handleNotificationClick}
             />
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </>
   );
