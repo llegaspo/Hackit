@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect, memo } from 'react';
 import { X, Heart, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { createPortal } from 'react-dom';
+import Image from 'next/image';
 
 interface Comment {
   id: string;
@@ -27,6 +28,7 @@ interface PostModalProps {
     profileColor: string;
     isLiked?: boolean;
     images?: string[];
+    avatar?: string;
   };
   onLike?: (postId: string) => void;
   onComment?: (postId: string, comment: string) => void;
@@ -126,9 +128,11 @@ const PreviewPostModal: React.FC<PostModalProps> = ({
           overflow: 'hidden',
           marginBottom: '1rem'
         }}>
-          <img 
+          <Image 
             src={post.images[0]} 
             alt="Post image" 
+            width={800}
+            height={480}
             style={{ 
               width: '100%', 
               height: 'auto',
@@ -150,9 +154,11 @@ const PreviewPostModal: React.FC<PostModalProps> = ({
         marginBottom: '1rem',
         backgroundColor: '#f0f0f0'
       }}>
-        <img 
+        <Image 
           src={post.images[currentImageIndex]} 
           alt={`Post image ${currentImageIndex + 1}`} 
+          width={800}
+          height={480}
           style={{ 
             width: '100%', 
             height: 'auto',
@@ -381,6 +387,7 @@ const PreviewPostModal: React.FC<PostModalProps> = ({
           transition: all 0.2s ease;
           text-decoration: none;
           display: inline-block;
+          white-space: nowrap;
         }
 
         .sign-up-button {
@@ -434,13 +441,15 @@ const PreviewPostModal: React.FC<PostModalProps> = ({
           }
 
           .restriction-buttons {
-            flex-direction: column;
+            flex-direction: row;
             gap: 0.5rem;
           }
 
           .restriction-button {
-            width: 100%;
+            flex: 1;
             padding: 0.75rem 1rem;
+            font-size: 0.8rem;
+            white-space: nowrap;
           }
         }
       `}</style>
@@ -459,7 +468,19 @@ const PreviewPostModal: React.FC<PostModalProps> = ({
                 height: '3rem',
                 backgroundColor: post.profileColor,
                 borderRadius: '50%',
-              }} />
+                backgroundImage: post.avatar ? `url(${post.avatar})` : 'none',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1.25rem',
+                fontWeight: 'bold',
+                color: 'white',
+                fontFamily: "'Britti Sans Trial', Inter, sans-serif",
+              }}>
+                {!post.avatar && post.authorName.charAt(0).toUpperCase()}
+              </div>
               <div>
                 <div style={{
                   fontSize: '1.125rem',

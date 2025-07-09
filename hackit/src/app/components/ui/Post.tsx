@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, memo, useEffect } from 'react';
 import { Heart, MessageCircle } from 'lucide-react';
+import Image from 'next/image';
 import PostModal from './PostModal';
 
 interface PostProps {
@@ -12,10 +13,18 @@ interface PostProps {
   likes: number;
   comments: number;
   profileColor: string;
+  avatar?: string; // Add avatar support
   isLiked?: boolean; // Add liked state
   onLike?: (postId: string) => void; // Callback for real data integration
   onComment?: (postId: string) => void; // Callback for real data integration
   images?: string[]; // Add support for multiple images
+  currentUser?: {
+    id: string;
+    name: string;
+    role: string;
+    profileColor: string;
+    avatar?: string;
+  };
 }
 
 const Post: React.FC<PostProps> = ({
@@ -27,10 +36,12 @@ const Post: React.FC<PostProps> = ({
   likes,
   comments,
   profileColor,
+  avatar,
   isLiked = false,
   onLike,
   onComment,
-  images = []
+  images = [],
+  currentUser
 }) => {
   const [liked, setLiked] = useState(isLiked);
   const [likeCount, setLikeCount] = useState(likes);
@@ -124,12 +135,11 @@ const Post: React.FC<PostProps> = ({
           overflow: 'hidden',
           marginBottom: '1rem'
         }}>
-          <img 
+          <Image 
             src={images[0]} 
             alt="Post image" 
+            fill
             style={{ 
-              width: '100%', 
-              height: '100%', 
               objectFit: 'cover' 
             }}
           />
@@ -159,12 +169,11 @@ const Post: React.FC<PostProps> = ({
               gridRow: images.length === 3 && index === 0 ? 'span 2' : 'auto',
             }}
           >
-            <img
+            <Image
               src={image}
               alt={`Post image ${index + 1}`}
+              fill
               style={{ 
-                width: '100%', 
-                height: '100%', 
                 objectFit: 'cover' 
               }}
             />
@@ -408,12 +417,29 @@ const Post: React.FC<PostProps> = ({
       <div className="post-container">
         {/* Header */}
         <div className="post-header">
-          <div style={{
-            width: '3rem',
-            height: '3rem',
-            backgroundColor: profileColor,
-            borderRadius: '50%',
-          }} />
+          <div 
+            className="profile-avatar"
+            style={{
+              width: '3rem',
+              height: '3rem',
+              backgroundColor: profileColor,
+              backgroundImage: avatar ? `url(${avatar})` : 'none',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              borderRadius: '50%',
+              flexShrink: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1.125rem',
+              fontWeight: 600,
+              color: 'white',
+              textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+              fontFamily: "'Britti Sans Trial', Inter, sans-serif",
+            }}
+          >
+            {!avatar && authorName.charAt(0).toUpperCase()}
+          </div>
           <div style={{ flex: 1 }}>
             <div style={{
               fontSize: '1.125rem',
@@ -519,11 +545,13 @@ const Post: React.FC<PostProps> = ({
           likes: likeCount,
           comments,
           profileColor,
+          avatar,
           isLiked: liked,
           images
         }}
         onLike={handleModalLike}
         onComment={onComment}
+        currentUser={currentUser}
       />
     </div>
   );

@@ -1,18 +1,20 @@
 "use client";
 import React from 'react';
-import { MapPin, Edit } from 'lucide-react';
+import { MapPin, Edit, Globe } from 'lucide-react';
 
 interface ProfileHeaderProps {
   user: {
     name: string;
-    businessName: string;
+    businessPosition: string;
     location: string;
     avatarColor: string;
     avatar?: string;
+    website?: string;
   };
+  onEditClick?: () => void;
 }
 
-const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user }) => {
+const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, onEditClick }) => {
   const containerStyle: React.CSSProperties = {
     backgroundColor: 'rgba(255, 248, 248, 0.8)',
     backdropFilter: 'blur(20px)',
@@ -65,6 +67,19 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user }) => {
     color: '#777',
     fontWeight: 300,
     transition: 'all 0.3s ease',
+    marginBottom: user.website ? '0.5rem' : '0',
+  };
+
+  const websiteStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '0.5rem',
+    color: '#777',
+    fontWeight: 300,
+    transition: 'all 0.3s ease',
+    textDecoration: 'none',
+    cursor: 'pointer',
   };
 
   const editButtonStyle: React.CSSProperties = {
@@ -114,6 +129,28 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user }) => {
           color: #666 !important;
         }
 
+        .profile-container:hover .profile-website {
+          color: #4A90E2 !important;
+        }
+
+        .profile-website:hover {
+          color: #E91E63 !important;
+          transform: translateY(-0.125rem) !important;
+        }
+
+        .website-icon {
+          transition: all 0.3s ease;
+        }
+
+        .profile-container:hover .website-icon {
+          transform: scale(1.1);
+          color: #4A90E2;
+        }
+
+        .profile-website:hover .website-icon {
+          color: #E91E63 !important;
+        }
+
         .edit-button:hover {
           background: linear-gradient(135deg, #F7C5C5, #E8A8A8) !important;
           transform: scale(1.1) rotate(5deg) !important;
@@ -153,6 +190,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user }) => {
           .profile-location, .profile-location span {
             font-size: 0.875rem !important;
           }
+          .profile-website, .profile-website span {
+            font-size: 0.875rem !important;
+          }
           .edit-button {
             width: 2.5rem !important;
             height: 2.5rem !important;
@@ -164,12 +204,18 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user }) => {
       <div style={containerStyle} className="profile-container">
         <div style={avatarStyle} className="profile-avatar"></div>
         <h1 style={nameStyle} className="profile-name">{user.name}</h1>
-        <p style={businessStyle} className="profile-business">{user.businessName}</p>
+        <p style={businessStyle} className="profile-business">{user.businessPosition}</p>
         <div style={locationStyle} className="profile-location">
           <MapPin size={18} className="location-icon" />
           <span>{user.location}</span>
         </div>
-        <button style={editButtonStyle} className="edit-button">
+        {user.website && (
+          <a href={user.website} target="_blank" rel="noopener noreferrer" style={websiteStyle} className="profile-website">
+            <Globe size={18} className="website-icon" />
+            <span>{user.website}</span>
+          </a>
+        )}
+        <button style={editButtonStyle} className="edit-button" onClick={onEditClick}>
           <Edit size={18} />
         </button>
       </div>

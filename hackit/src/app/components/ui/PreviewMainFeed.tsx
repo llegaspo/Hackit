@@ -14,6 +14,7 @@ interface PostData {
   profileColor: string;
   isLiked: boolean;
   images?: string[];
+  avatar?: string;
 }
 
 interface PreviewMainFeedProps {
@@ -87,46 +88,85 @@ const PreviewMainFeed: React.FC<PreviewMainFeedProps> = ({
   onComment 
 }) => {
 
-  const containerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    padding: '2rem',
-    fontFamily: 'Britti Sans Trial, Inter, sans-serif',
-    minHeight: 'calc(100vh - 200px)',
-    maxWidth: '1400px',
-    margin: '0 auto',
-    width: '100%',
-  };
-
-  const postsContainerStyle = {
-    maxWidth: '700px',
-    width: '100%',
-    minWidth: '0',
-  };
-
   return (
-    <div style={containerStyle}>
-      {/* Posts Container */}
-      <div style={postsContainerStyle}>
-        {posts.map((post) => (
-          <PreviewPost
-            key={post.id}
-            id={post.id}
-            authorName={post.authorName}
-            authorTitle={post.authorTitle}
-            timeAgo={post.timeAgo}
-            content={post.content}
-            likes={post.likes}
-            comments={post.comments}
-            profileColor={post.profileColor}
-            isLiked={post.isLiked}
-            onLike={onLike}
-            onComment={onComment}
-            images={post.images}
-          />
-        ))}
+    <>
+      <style jsx>{`
+        .preview-main-feed-container {
+          display: flex;
+          justify-content: center;
+          padding: 2rem;
+          font-family: 'Britti Sans Trial', 'Inter', sans-serif;
+          min-height: calc(100vh - 200px);
+          max-width: 1400px;
+          margin: 0 auto;
+          width: 100%;
+        }
+
+        .preview-posts-container {
+          max-width: 700px;
+          width: 100%;
+          min-width: 0;
+        }
+
+        /* Tablet Styles */
+        @media (max-width: 1200px) {
+          .preview-main-feed-container {
+            max-width: 95%;
+            padding: 1.5rem;
+          }
+        }
+
+        @media (max-width: 1024px) {
+          .preview-main-feed-container {
+            padding: 1rem;
+          }
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+          .preview-main-feed-container {
+            padding: 1rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .preview-main-feed-container {
+            padding: 0.75rem;
+          }
+        }
+
+        /* Small Mobile Optimization */
+        @media (max-width: 360px) {
+          .preview-main-feed-container {
+            padding: 0.5rem;
+          }
+        }
+      `}</style>
+      
+      <div className="preview-main-feed-container">
+        {/* Posts Container */}
+        <div className="preview-posts-container">
+          {posts.map((post) => (
+            <PreviewPost
+              key={post.id}
+              id={post.id}
+              authorName={post.authorName}
+              authorTitle={post.authorTitle}
+              timeAgo={post.timeAgo}
+              content={post.content}
+              likes={post.likes}
+              comments={post.comments}
+              profileColor={post.profileColor}
+              isLiked={post.isLiked}
+              onLike={onLike}
+              onComment={onComment}
+              images={post.images}
+              avatar={post.avatar}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

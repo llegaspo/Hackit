@@ -84,6 +84,9 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
     height: '3rem',
     borderRadius: '50%',
     backgroundColor: user.profileColor,
+    backgroundImage: user.avatar ? `url(${user.avatar})` : 'none',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -91,6 +94,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
     fontWeight: 600,
     color: 'white',
     fontFamily: "'Britti Sans Trial', Inter, sans-serif",
+    textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
   };
 
   const profileInfoStyle: React.CSSProperties = {
@@ -135,7 +139,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
             <h3 style={profileHeaderStyle}>Your Profile</h3>
             <div style={profileItemStyle}>
               <div style={profileCircleStyle}>
-                {user.name.charAt(0).toUpperCase()}
+                {!user.avatar && user.name.charAt(0).toUpperCase()}
               </div>
               <div style={profileInfoStyle}>
                 <div style={profileNameStyle}>{user.name}</div>

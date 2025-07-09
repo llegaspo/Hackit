@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect, memo } from 'react';
 import { createPortal } from 'react-dom';
 import { Heart, MessageCircle, X, Send } from 'lucide-react';
+import Image from 'next/image';
 
 interface Comment {
   id: string;
@@ -9,6 +10,7 @@ interface Comment {
   content: string;
   timeAgo: string;
   profileColor: string;
+  avatar?: string;
   likes: number;
   isLiked: boolean;
 }
@@ -27,6 +29,14 @@ interface PostModalProps {
     profileColor: string;
     isLiked?: boolean;
     images?: string[];
+    avatar?: string;
+  };
+  currentUser?: {
+    id: string;
+    name: string;
+    role: string;
+    profileColor: string;
+    avatar?: string;
   };
   onLike?: (postId: string) => void;
   onComment?: (postId: string, comment: string) => void;
@@ -36,44 +46,45 @@ const PostModal: React.FC<PostModalProps> = ({
   isOpen,
   onClose,
   post,
+  currentUser,
   onLike,
   onComment
 }) => {
+  const [mounted, setMounted] = useState(false);
   const [liked, setLiked] = useState(post.isLiked || false);
   const [likeCount, setLikeCount] = useState(post.likes);
   const [commentText, setCommentText] = useState('');
-  const [mounted, setMounted] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [comments, setComments] = useState<Comment[]>([
     {
       id: "1",
-      authorName: "Sarah Johnson",
-      content: "This is such valuable insight! Thanks for sharing your experience with micro-influencer collaborations.",
-      timeAgo: "1h ago",
-      profileColor: "#C8E6C9",
-      likes: 12,
+      authorName: "Emma Wilson",
+      content: "This is exactly what I needed to hear today! Thanks for sharing your insights.",
+      timeAgo: "2m ago",
+      profileColor: "#4ECDC4",
+      likes: 5,
       isLiked: false
     },
     {
       id: "2", 
-      authorName: "Mike Chen",
-      content: "Really appreciate the transparency about your analytics. The 150% engagement increase is impressive!",
-      timeAgo: "45m ago",
-      profileColor: "#FFE0B2",
+      authorName: "Sarah Chen",
+      content: "Your approach to data-driven marketing is spot on. We've seen similar results with our campaigns.",
+      timeAgo: "15m ago",
+      profileColor: "#FFE66D",
       likes: 8,
       isLiked: true
     },
     {
       id: "3",
-      authorName: "Emily Rodriguez",
-      content: "Would love to hear more about your selection process for micro-influencers. Any specific criteria you look for?",
-      timeAgo: "30m ago",
-      profileColor: "#F8BBD9",
-      likes: 5,
+      authorName: "Jessica Martinez",
+      content: "Would love to connect and learn more about your micro-influencer strategies!",
+      timeAgo: "1h ago", 
+      profileColor: "#FF6B6B",
+      likes: 3,
       isLiked: false
     }
   ]);
-
+  
   const commentInputRef = useRef<HTMLTextAreaElement>(null);
   const modalContentRef = useRef<HTMLDivElement>(null);
 
@@ -108,10 +119,11 @@ const PostModal: React.FC<PostModalProps> = ({
     if (commentText.trim()) {
       const newComment: Comment = {
         id: Date.now().toString(),
-        authorName: "You",
+        authorName: currentUser?.name || "You",
         content: commentText.trim(),
         timeAgo: "now",
-        profileColor: "#F7C5C5",
+        profileColor: currentUser?.profileColor || "#F7C5C5",
+        avatar: currentUser?.avatar,
         likes: 0,
         isLiked: false
       };
@@ -174,9 +186,11 @@ const PostModal: React.FC<PostModalProps> = ({
           borderRadius: '0.75rem',
           overflow: 'hidden',
         }}>
-          <img 
+          <Image 
             src={post.images[0]} 
             alt="Post image" 
+            width={800}
+            height={600}
             style={{ 
               width: '100%', 
               height: 'auto',
@@ -201,9 +215,11 @@ const PostModal: React.FC<PostModalProps> = ({
       }}>
         {/* Main Image Display */}
         <div style={{ position: 'relative' }}>
-          <img
+          <Image
             src={post.images[currentImageIndex]}
             alt={`Post image ${currentImageIndex + 1}`}
+            width={800}
+            height={600}
             style={{ 
               width: '100%', 
               height: 'auto',
@@ -623,7 +639,19 @@ const PostModal: React.FC<PostModalProps> = ({
                 height: '3rem',
                 backgroundColor: post.profileColor,
                 borderRadius: '50%',
-              }} />
+                backgroundImage: post.avatar ? `url(${post.avatar})` : 'none',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1.25rem',
+                fontWeight: 'bold',
+                color: 'white',
+                fontFamily: "'Britti Sans Trial', Inter, sans-serif",
+              }}>
+                {!post.avatar && post.authorName.charAt(0).toUpperCase()}
+              </div>
               <div>
                 <div style={{
                   fontSize: '1.125rem',
@@ -727,7 +755,19 @@ const PostModal: React.FC<PostModalProps> = ({
                     backgroundColor: comment.profileColor,
                     borderRadius: '50%',
                     flexShrink: 0,
-                  }} />
+                    backgroundImage: comment.avatar ? `url(${comment.avatar})` : 'none',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1rem',
+                    fontWeight: 'bold',
+                    color: 'white',
+                    fontFamily: "'Britti Sans Trial', Inter, sans-serif",
+                  }}>
+                    {!comment.avatar && comment.authorName.charAt(0).toUpperCase()}
+                  </div>
                   <div style={{ flex: 1 }}>
                     <div style={{
                       display: 'flex',
@@ -772,10 +812,22 @@ const PostModal: React.FC<PostModalProps> = ({
               <div style={{
                 width: '2.5rem',
                 height: '2.5rem',
-                backgroundColor: '#F7C5C5',
+                backgroundColor: currentUser?.profileColor || '#F7C5C5',
                 borderRadius: '50%',
                 flexShrink: 0,
-              }} />
+                backgroundImage: currentUser?.avatar ? `url(${currentUser.avatar})` : 'none',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1rem',
+                fontWeight: 'bold',
+                color: 'white',
+                fontFamily: "'Britti Sans Trial', Inter, sans-serif",
+              }}>
+                {!currentUser?.avatar && (currentUser?.name?.charAt(0)?.toUpperCase() || 'Y')}
+              </div>
               <textarea
                 ref={commentInputRef}
                 className="post-modal-comment-input"

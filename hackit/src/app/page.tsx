@@ -12,43 +12,33 @@ const MobileMenu = dynamic(() => import('./components/ui/MobileMenu'));
 const MainFeed = dynamic(() => import('./components/ui/MainFeed'));
 const ProfileHeader = dynamic(() => import('./components/ui/ProfileHeader'));
 const ProfileContent = dynamic(() => import('./components/ui/ProfileContent'));
+const EditProfile = dynamic(() => import('./components/ui/EditProfile'));
 
-const userProfile = {
+// Define user profile interface for consistency
+interface UserProfile {
+  name: string;
+  businessPosition: string;
+  location: string;
+  avatarColor: string;
+  avatar?: string;
+  website?: string;
+}
+
+const userProfile: UserProfile = {
   name: 'Placeholder Name',
-  businessName: 'Business owner of Placeholder Business',
+  businessPosition: 'C.E.O of TechCorp Solutions',
   location: 'Mandaue City, Cebu, Central Visayas, Philippines',
   avatarColor: '#F7C5C5',
+  // avatar: 'https://picsum.photos/150/150?random=1', // Removed random avatar
+  website: 'https://portfolio.example.com', // Can be empty string '' if no website to hide this section
 };
-
-const userPosts = [
-    {
-      id: "1",
-      authorName: 'Placeholder Name',
-      authorTitle: 'Business owner of Placeholder Business',
-      timeAgo: '2h ago',
-      content: 'Just wrapped up a deep dive into our Q3 analytics. The data confirms that shifting our ad spend from broad-stroke campaigns to hyper-targeted micro-influencer collaborations has yielded a 150% increase in engagement. For fellow B2C founders, don\'t underestimate the power of a niche audience. Authenticity is our most valuable currency!',
-      likes: 102,
-      comments: 23,
-      profileColor: '#F7C5C5',
-      isLiked: false,
-      images: ['/images/placeholder.jpg'],
-    },
-    {
-      id: "2",
-      authorName: 'Placeholder Name',
-      authorTitle: 'Business owner of Placeholder Business',
-      timeAgo: '8h ago',
-      content: 'Scaling a startup is a marathon, not a sprint. This week, we focused on refining our operational workflows to eliminate bottlenecks before our next growth phase. We implemented a new project management system that integrates directly with our CRM. The goal? To ensure our client-facing teams have real-time data access, reducing response times by an anticipated 30%. Remember, a strong internal foundation is what makes external growth sustainable. We\'re building a skyscraper, not a house of cards.',
-      likes: 256,
-      comments: 41,
-      profileColor: '#F7C5C5',
-      isLiked: true,
-    },
-];
 
 export default function Home() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeView, setActiveView] = useState('forHer');
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [currentUserProfile, setCurrentUserProfile] = useState<UserProfile>(userProfile);
+  const [isFirstVisit, setIsFirstVisit] = useState(true); // Simulate first visit after signup
 
   const handleMobileMenuToggle = useCallback(() => {
     setIsMobileMenuOpen(prev => !prev);
@@ -58,22 +48,91 @@ export default function Home() {
     setActiveView(view);
   }, []);
 
+  const handleEditProfile = useCallback(() => {
+    setIsEditingProfile(true);
+  }, []);
+
+  const handleSaveProfile = useCallback((updatedUser: UserProfile) => {
+    setCurrentUserProfile(updatedUser);
+    setIsEditingProfile(false);
+    setIsFirstVisit(false); // Mark as no longer first visit after saving profile
+  }, []);
+
+  const handleCancelEdit = useCallback(() => {
+    setIsEditingProfile(false);
+    if (isFirstVisit) {
+      // If canceling on first visit, still mark as no longer first visit
+      setIsFirstVisit(false);
+    }
+  }, [isFirstVisit]);
+
+  const handleSkipProfile = useCallback(() => {
+    setIsFirstVisit(false);
+    setIsEditingProfile(false);
+  }, []);
+
   const renderContent = () => {
     switch (activeView) {
       case 'forHer':
-        return <MainFeed />;
+        return <MainFeed currentUser={{
+          id: "current-user",
+          name: currentUserProfile.name,
+          role: currentUserProfile.businessPosition,
+          profileColor: currentUserProfile.avatarColor,
+          avatar: currentUserProfile.avatar
+        }} />;
       case 'profile':
         return (
           <div className="profile-view-container">
-            <ProfileHeader user={userProfile} />
-            <ProfileContent posts={userPosts} />
+            <ProfileHeader user={currentUserProfile} onEditClick={handleEditProfile} />
+            <ProfileContent posts={userPosts} currentUser={{
+              id: "current-user",
+              name: currentUserProfile.name,
+              role: currentUserProfile.businessPosition,
+              profileColor: currentUserProfile.avatarColor,
+              avatar: currentUserProfile.avatar
+            }} />
           </div>
         );
       default:
         // By default, or if notifications is clicked, show the main feed
-        return <MainFeed />;
+        return <MainFeed currentUser={{
+          id: "current-user",
+          name: currentUserProfile.name,
+          role: currentUserProfile.businessPosition,
+          profileColor: currentUserProfile.avatarColor,
+          avatar: currentUserProfile.avatar
+        }} />;
     }
   };
+
+  const userPosts = [
+    {
+      id: "1",
+      authorName: currentUserProfile.name,
+      authorTitle: currentUserProfile.businessPosition,
+      timeAgo: '2h ago',
+      content: 'Just wrapped up a deep dive into our Q3 analytics. The data confirms that shifting our ad spend from broad-stroke campaigns to hyper-targeted micro-influencer collaborations has yielded a 150% increase in engagement. For fellow B2C founders, don\'t underestimate the power of a niche audience. Authenticity is our most valuable currency!',
+      likes: 102,
+      comments: 23,
+      profileColor: currentUserProfile.avatarColor,
+      isLiked: false,
+      images: ['/images/placeholder.jpg'],
+      avatar: currentUserProfile.avatar,
+    },
+    {
+      id: "2",
+      authorName: currentUserProfile.name,
+      authorTitle: currentUserProfile.businessPosition,
+      timeAgo: '8h ago',
+      content: 'Scaling a startup is a marathon, not a sprint. This week, we focused on refining our operational workflows to eliminate bottlenecks before our next growth phase. We implemented a new project management system that integrates directly with our CRM. The goal? To ensure our client-facing teams have real-time data access, reducing response times by an anticipated 30%. Remember, a strong internal foundation is what makes external growth sustainable. We\'re building a skyscraper, not a house of cards.',
+      likes: 256,
+      comments: 41,
+      profileColor: currentUserProfile.avatarColor,
+      isLiked: true,
+      avatar: currentUserProfile.avatar,
+    },
+  ];
 
   return (
     <LoadingWrapper>
@@ -208,7 +267,7 @@ export default function Home() {
 
             /* Add padding to account for navbars */
             .main-content-area {
-              padding-top: 3.75rem !important; /* 60px -> 3.75rem. Further reduced to bring content much closer to navbar */
+              padding-top: 2rem !important; /* Reduced from 3.75rem to bring content closer to navbar */
             }
           }
 
@@ -251,7 +310,17 @@ export default function Home() {
           <NavbarContainer onMobileMenuToggle={handleMobileMenuToggle} />
           <SecondaryNavbar activeView={activeView} onViewChange={handleViewChange} />
           <div className="main-content-area">
-            {renderContent()}
+            {(isEditingProfile || isFirstVisit) ? (
+              <EditProfile 
+                user={currentUserProfile}
+                onSave={handleSaveProfile}
+                onCancel={handleCancelEdit}
+                onSkip={isFirstVisit ? handleSkipProfile : undefined}
+                isFirstVisit={isFirstVisit}
+              />
+            ) : (
+              renderContent()
+            )}
           </div>
         </div>
       </div>

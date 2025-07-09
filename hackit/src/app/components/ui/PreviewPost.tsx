@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, memo, useEffect } from 'react';
 import { Heart, MessageCircle } from 'lucide-react';
+import Image from 'next/image';
 import dynamic from 'next/dynamic';
 
 const PreviewPostModal = dynamic(() => import('./PreviewPostModal'), {
@@ -20,6 +21,7 @@ interface PostProps {
   onLike?: (postId: string) => void;
   onComment?: (postId: string) => void;
   images?: string[];
+  avatar?: string;
 }
 
 const PreviewPost: React.FC<PostProps> = ({
@@ -33,7 +35,8 @@ const PreviewPost: React.FC<PostProps> = ({
   profileColor,
   isLiked = false,
   onComment,
-  images = []
+  images = [],
+  avatar
 }) => {
   const [liked] = useState(isLiked);
   const [likeCount] = useState(likes);
@@ -114,12 +117,11 @@ const PreviewPost: React.FC<PostProps> = ({
           overflow: 'hidden',
           marginBottom: '1rem'
         }}>
-          <img 
+          <Image 
             src={images[0]} 
             alt="Post image" 
+            fill
             style={{ 
-              width: '100%', 
-              height: '100%', 
               objectFit: 'cover' 
             }}
           />
@@ -149,12 +151,11 @@ const PreviewPost: React.FC<PostProps> = ({
               gridRow: images.length === 3 && index === 0 ? 'span 2' : 'auto',
             }}
           >
-            <img
+            <Image
               src={image}
               alt={`Post image ${index + 1}`}
+              fill
               style={{ 
-                width: '100%', 
-                height: '100%', 
                 objectFit: 'cover' 
               }}
             />
@@ -356,8 +357,20 @@ const PreviewPost: React.FC<PostProps> = ({
               backgroundColor: profileColor,
               borderRadius: '50%',
               flexShrink: 0,
+              backgroundImage: avatar ? `url(${avatar})` : 'none',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1.25rem',
+              fontWeight: 'bold',
+              color: 'white',
+              fontFamily: "'Britti Sans Trial', Inter, sans-serif",
             }} 
-          />
+          >
+            {!avatar && authorName.charAt(0).toUpperCase()}
+          </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div 
               className="author-name"
@@ -452,6 +465,7 @@ const PreviewPost: React.FC<PostProps> = ({
             profileColor,
             isLiked: liked,
             images,
+            avatar,
           }}
           onLike={handleModalLike}
           onComment={onComment}

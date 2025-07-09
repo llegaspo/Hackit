@@ -252,13 +252,14 @@ const AccessRestrictionModal: React.FC<AccessRestrictionModalProps> = ({
           }
 
           .access-buttons {
-            flex-direction: column;
+            flex-direction: row;
             gap: 0.75rem;
           }
 
           .access-button {
-            width: 100%;
-            padding: 1rem 1.5rem;
+            flex: 1;
+            padding: 1rem 1rem;
+            font-size: 0.8rem;
           }
 
           .access-title {

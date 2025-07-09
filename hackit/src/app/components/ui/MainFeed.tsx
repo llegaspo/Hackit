@@ -24,6 +24,7 @@ interface PostData {
   profileColor: string;
   isLiked?: boolean;
   images?: string[]; // Add images support
+  avatar?: string;
 }
 
 interface MainFeedProps {
@@ -107,21 +108,18 @@ const MainFeed: React.FC<MainFeedProps> = ({
 }) => {
   
   const handleLike = useCallback((postId: string) => {
-    console.log(`Liked post: ${postId}`);
     if (onLike) {
       onLike(postId);
     }
   }, [onLike]);
 
   const handleComment = useCallback((postId: string) => {
-    console.log(`Comment on post: ${postId}`);
     if (onComment) {
       onComment(postId);
     }
   }, [onComment]);
 
   const handleCreatePost = useCallback((content: string, files: File[]) => {
-    console.log('Creating post:', { content, files });
     if (onCreatePost) {
       onCreatePost(content, files);
     }
@@ -305,6 +303,8 @@ const MainFeed: React.FC<MainFeedProps> = ({
                   profileColor={post.profileColor}
                   isLiked={post.isLiked}
                   images={post.images}
+                  avatar={post.avatar}
+                  currentUser={currentUser}
                   onLike={handleLike}
                   onComment={handleComment}
                 />

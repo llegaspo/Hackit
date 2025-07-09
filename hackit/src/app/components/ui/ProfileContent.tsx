@@ -15,13 +15,23 @@ interface PostData {
   profileColor: string;
   isLiked?: boolean;
   images?: string[];
+  avatar?: string;
+}
+
+interface CurrentUser {
+  id: string;
+  name: string;
+  role: string;
+  profileColor: string;
+  avatar?: string;
 }
 
 interface ProfileContentProps {
   posts: PostData[];
+  currentUser: CurrentUser;
 }
 
-const ProfileContent: React.FC<ProfileContentProps> = ({ posts }) => {
+const ProfileContent: React.FC<ProfileContentProps> = ({ posts, currentUser }) => {
   const [activeTab, setActiveTab] = useState('posts');
 
   const renderContent = () => {
@@ -33,7 +43,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ posts }) => {
             margin: '0 auto',
           }}>
             {posts.map((post) => (
-              <Post key={post.id} {...post} />
+              <Post key={post.id} {...post} currentUser={currentUser} />
             ))}
           </div>
         );

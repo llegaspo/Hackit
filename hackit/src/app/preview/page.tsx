@@ -146,7 +146,7 @@ export default function PreviewPage() {
 
             /* Add padding to account for navbars */
             .main-content-area {
-              padding-top: 3.75rem !important; /* 60px -> 3.75rem. Further reduced to bring content much closer to navbar */
+              padding-top: 2rem !important; /* Reduced from 3.75rem to bring content closer to navbar */
             }
           }
 
